@@ -25,7 +25,7 @@ function pathXY()::Vector{<:Integer}
 end
 
 # moving_back_to_start двигает робота из нижней левой клетки в начальную по обратному пути из массива PATH
-function moving_back_to_start(r)::Nothing
+function moving_back_to_start!(r)::Nothing
     for i in lenght(PATH)
         for a in PATH[i]
             move!(r, HorizonSide((i+2)%4))
@@ -45,7 +45,7 @@ function tuda_suda(side)::Integer
 end
 
 # moving_around двигает робота по внутренним сторанам квадрата
-function moving_around(r)::Nothing
+function moving_around!(r)::Nothing
     steps_to_marker = [0,0]
 
     for steps in path[2]
@@ -82,9 +82,9 @@ function moving_around(r)::Nothing
         move!(r,West)
     end 
 end
-
+# master! главная функция программы
 function master(r)::Nothing
     moving_in_angle!(r)
-    moving_around(r)
-    moving_back_to_start(r)
+    moving_around!(r)
+    moving_back_to_start!(r)
 end
