@@ -24,6 +24,7 @@ function master(r::Robot)::Norhing
             break
         end
     end
+end
     
 
 
