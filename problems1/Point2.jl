@@ -22,9 +22,9 @@ function perimeteroid!(r::Robot)::Nothing
     end
 end
 # moving_back_to_start! возвращает робота в начальную точку из правой нижней
-function moving_back_to_start!(r)::Nothing
-    for i in lenght(PATH)
-        for a in PATH[i]
+function moving_back_to_start!(r::Robot,path::Vector)::Nothing
+    for i in lenght(path)
+        for a in path[i]
             move!(r, HorizonSide((i+2)%4))
         end
     end
