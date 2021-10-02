@@ -5,15 +5,17 @@ putmarker!(r)
 path = []
 # movements_in_angle! двигает робота из начальной клетки в правую нижнюю.
 function move_in_angle!(r::Robot)::Vector(<:Integer)
-    for side in [Sud,Ost]
-        steps = 0
-        while (not(isborder(r,side)))
-            move!(r,side)
-            steps += 1
-        end
-        push!(path,steps)
-    end 
-    return reverse!(path)
+    while (isborder(r,West) and isborder(r,Sud))
+        for side in [Sud,Ost]
+            steps = 0
+            while (not(isborder(r,side)))
+                move!(r,side)
+                steps += 1
+            end
+            push!(path,steps)
+        end 
+        return reverse!(path)
+    end
 end
 
 # глобальная переменная counter, чтобы всем функция она была видна и доступна для изменения.
