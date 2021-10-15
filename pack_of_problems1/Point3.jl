@@ -51,6 +51,13 @@ function Point3_master!(robot::Robot)::Nothing
     putmarker!(robot)
     # get_lines промаркирует всё поле змейкой
     get_lines!(robot)
+    
+    for side in [Sud,West]
+        while (not(isboerder(robot,side)))
+            move!(robot,side)
+        end
+    end
+    
     # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
     moving_back_to_start!(robot, back_path)
 
