@@ -22,10 +22,10 @@ function moving_in_angle!(robot::Robot)::Vector{<:Integer}
     return reverse!(back_path)
 end
 # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
-function moving_back_to_start!(robor::Robot, back_path::Vector{<:Integer})::Nothing
+function moving_back_to_start!(robot::Robot, back_path::Vector{<:Integer})::Nothing
     for (index,value) in enumerate(back_path)
         for step in value
-            move!(robor, HorizonSide((index + 1) % 2))
+            move!(robot, HorizonSide((index + 1) % 2))
         end
     end
 end
