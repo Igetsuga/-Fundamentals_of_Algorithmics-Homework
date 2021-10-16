@@ -12,7 +12,7 @@ end
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
 function moving_in_angle!(robot::Robot, sides)::Vector{<:Integer}
     back_path = []
-    while (!(isborder(robot, sides[1])) and !(isborder(robot, sides[2])))
+    while (!(isborder(robot, sides[1])) && !(isborder(robot, sides[2])))
         for side in [sides[1],sides[2]]
             steps = 0
             while (not(isborder(robot,side)))

@@ -35,7 +35,7 @@ end
 
 # get_line! создаёт линию из маркеров
 function get_line!(r::Robot,side::HorizonSide)::Nothing
-    while (isborder(side) = false)
+    while (isborder(side) == false)
         move!(r,side)
         putmarker!(r)
     end

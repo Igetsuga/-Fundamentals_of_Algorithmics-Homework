@@ -6,9 +6,9 @@
 
 using HorizonSideRobots
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
-function moving_in_angle!(robot::Robot)::Vector{<:Integer}
+function moving_in_angle!(robot::Robot)
     back_path = []
-    while (not(isborder(robot, West)) and not(isborder(robot, Sud)))
+    while (!(isborder(robot, West)) && !(isborder(robot, Sud)))
         for side in [Sud, Ost]
             steps = 0
             while (not(isborder(robot,side)))
@@ -21,7 +21,7 @@ function moving_in_angle!(robot::Robot)::Vector{<:Integer}
     return reverse!(back_path)
 end
 # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
-function moving_back_to_start!(robot::Robot, back_path::Vector{<:Integer})::Nothing
+function moving_back_to_start!(robot::Robot, back_path::Vector)
     for (index,value) in enumerate(back_path)
         for step in value
             move!(robot, HorizonSide((index + 1) % 2))
@@ -29,15 +29,15 @@ function moving_back_to_start!(robot::Robot, back_path::Vector{<:Integer})::Noth
     end
 end
 # get_lines промаркирует всё поле змейкой
-function get_lines!(robot::Robot)::Nothing
-    while (not(isborder(robot,West)))
+function get_lines!(robot::Robot)
+    while (!(isborder(robot,West)))
         for side in [Nord,Sud]
             putmarker!(robot)
-            while (not(isborder(robot,side)))
+            while (!(isborder(robot,side)))
                 move!(robot, side)
                 putmarker!(robot)
             end
-            if (not(isborder(robot,West)))
+            if (!(isborder(robot,West)))
                 move!(robot,West)
             end
         end
@@ -45,15 +45,15 @@ function get_lines!(robot::Robot)::Nothing
 end
 
 # Point3_master! главная функция программы
-function Point3_master!(robot::Robot)::Nothing
+function Point3_master!(robot::Robot)
     # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
-    back_bath = moving_in_angle!(robot)
+    back_path = moving_in_angle!(robot)
     putmarker!(robot)
     # get_lines промаркирует всё поле змейкой
     get_lines!(robot)
     
     for side in [Sud,West]
-        while (not(isboerder(robot,side)))
+        while (!(isborder(robot,side)))
             move!(robot,side)
         end
     end
