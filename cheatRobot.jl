@@ -16,30 +16,6 @@ function move_for!(robot::Robot,side::HorizonSide,steps)
     end
 end
 # -----------------------------------------------------------------------------------------------------
-function try_move_var1!(robot, side)
-    steps = 0
-    nextside = next_side(side)
-    while isborder(robot, side)
-        if !isborder(robot, nextside)
-            move!(robot, nextside)
-            steps += 1
-        else
-            for j in 1:steps
-                move!(robot, anti_side(nextside))
-            end
-            return false
-        end
-    end
-
-    move!(robot, side)
-    while isborder(robot, anti_side(nextside))
-        move!(robot, side)
-    end
-
-    move_for!(robot, anti_side(nextside), steps)
-    return true
-end
-# -----------------------------------------------------------------------------------------------------
 function try_move_var2!(robot, side)
     steps = 0
     nextside = next_side_pr(side)
@@ -64,14 +40,33 @@ function try_move_var2!(robot, side)
     return true
 end
 # -----------------------------------------------------------------------------------------------------
-function try_move!(robot,side)
-    try_move_var1!(r,Ost)
-    if (try_move_var1!(r,Ost) == false)
-        try_move_var2!(r,Ost)
-        if (try_move_var2!(robot,side) == false)
-            return false
+function try_move!(robot, side)
+    flag = true
+    steps = 0
+    nextside = next_side(side)
+    while isborder(robot, side)
+        if !isborder(robot, nextside)
+            move!(robot, nextside)
+            steps += 1
+        else
+            for j in 1:steps
+                move!(robot, anti_side(nextside))
+            end
+            flag = false
+            try_move_var2!(r,side)
         end
     end
-    return true
+    if (flag) 
+        move!(robot, side)
+        while isborder(robot, anti_side(nextside))
+            move!(robot, side)
+        end
+
+        move_for!(robot, anti_side(nextside), steps)
+        return true
+    end
 end
+# -----------------------------------------------------------------------------------------------------
+
+
 
