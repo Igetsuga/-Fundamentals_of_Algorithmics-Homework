@@ -1,24 +1,35 @@
-# master главная фуекция программы
-function master!(r::Robot)::Nothing
+```
+
+ДАНО: Робот - рядом с горизонтальной перегородкой под ней, бесконечно продолжающейся в обе стороны, в которой имеется проход шириной в одну клетку.
+РЕЗУЛЬТАТ: Робот - в клетке под проходом
+
+```
+using HorizonSideRobots
+r = Robot(animate = true)
+include("../cheatRobot.jl")
+
+function Point8_master!(r::Robot)
+    flag = false
     counter = 1
-    # идем влево на j клеток, если яму не нашли, идем вправо на j+1 клтетку и тд. пока яма не будет найдена
-    if not(isnorder(r,Nord))
+    if (isborder(r,Nord))
         while (isborder(r,Nord))
-            for SIDE in (1,3)
-                for steps in range(counter)
-                    if (not(isnorder(r,Nord)))
-                        move!(r,HorizonSide(SIDE))
-                    else
+            for side in [West,Ost]
+                for steps in 1:counter
+                    move!(r, side)
+                    if !isborder(r, Nord)
                         move!(r,Nord)
-                        # я не знаю, как этот break работает, но мне нужно, чтобы он меня выбросил из самой внешней функции if, если он так не
-                        # делает, то юзаем flag
+                        flag = true
                         break
                     end
                 end
-                counter+=1 
+                counter += 1
+            end
+            if flag 
+                break
             end
         end
     else
         move!(r,Nord)
+        flag = true
     end
 end
