@@ -1,36 +1,48 @@
-# isMark определяет жесть ли в клетке маркер
-function isMark(r::Robot, temperature::Integer, counter::Integer)::Integer
+```
+
+ДАНО: Робот - в юго-западном углу поля, на котором расставлено некоторое количество маркеров
+
+РЕЗУЛЬТАТ: Функция вернула значение средней температуры всех замаркированных клеток
+
+```
+
+using HorizonSideRobots
+r = Robot(animate = true)
+include("../cheatRobot.jl")
+
+# isMark определяет жесть ли в клетке маркер, если да, то добавляет к answer температуру и увеличивает счетчик
+function isMark(r::Robot)::Nothing
     if (ismarker(r))
-        temperature += temperature
-        counter += 1
+        answer[1] += temperature(r)
+        answer[2] += 1
     end
 end
 
-# upORdown идёт до упора вверх в вверх или вниз, проверяет наличие маркера на каждом шагу 
-function upORdown(r::Robot,side::HorizonSide)::Nothing
-    while not(isborder(r,side))
-        move!(r)
-        isMark(r)
+# змейка с try_move! и isMark 
+function move_like_snake!(r::Robot)
+    while !(isborder(r,Ost))
+        for side in [Nord, Sud]
+            while !isborder(r,side)
+                try_move!(r,side)
+                isMark(r)
+            end
+            if !isborder(r,Ost)
+                try_move!(r,Ost)
+                isMark(r)
+            else
+                continue
+            end
+        end
     end
-
-# змейкой проходит все поле и собирает информацию о температуре в клетках
-function tuda_suda(r::Robot)::Integer
-        if isborder(r,Sud)
-            upORdown(r,((side+2)%4))
-        else
-            upORdown(r,((side+2)%4))
-        end     
 end
+
 
 # master главная функция программа
-function master(r::Robot)::Integer
-    temperature = 0
-    counter = 0
+function Point10_master!(r::Robot)::Integer
+    global answer = [0,0]
     isMark(r)
-    while (not(isborder(r,Ost)))
-        tuda_suda(r)
-    end
-    return (temperature/counter)
+    move_like_snake!(r)
+    return ( answer[1] / answer[2] )
 end
 
 
