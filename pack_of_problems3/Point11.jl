@@ -1,33 +1,32 @@
+```
+ДАНО: Робот - в произвольной клетке ограниченного прямоугольного поля,
+на котором могут находиться также внутренние прямоугольные перегородки 
+все перегородки изолированы друг от друга, прямоугольники могут вырождаться в отрезки
+
+РЕЗУЛЬТАТ: Робот - в исходном положении, и в 4-х приграничных клетках, две из которых имеют ту же широту,
+а две - ту же долготу, что и Робот, стоят маркеры.
+
+```
+
+using HorizonSideRobots
+include("../use.jl")
 
 
-# movements_in_angle! двигает робота из начальной клетки в правую нижнюю.
-function move_in_angle!(r::Robot)
-    path=[]
-    while (isborder(r,West) && isborder(r,Sud))
-        for side in [Sud,Ost]
-            steps = 0
-            while (not(isborder(r,side)))
-                move!(r,side)
-                steps += 1
-            end
-            push!(path,steps)
-        end 
-        reverse!(path)
-        return path
+function move_to_border!(robot::Robot, side::HorizonSide)
+    steps = 0
+    while (try_move!(r,side))
+        steps += 1
+        push!(Steps,steps)
+        steps = 0
+        push!(Sides,Int(side))
     end
+    
 end
 
-# moving_back_to_start! вернет робота в начальную клетку.
-function move_back_to_start!(r::Robot, path::Vector)::Nothing
-    for i in lenght(path)
-        for a in path[i]
-            move!(r,HorizonSide((i+2)%4))
-        end
+function master!(robot::Robot)::Nothing
+    for side in [Nord, Sud, West, Ost]
+        move_to_border!(robot,side)
+        putmarker!(r)
+        move_back!(r,reverse!(Steps),reverse!(Sides))
     end
-end
-
-function master!(r::Robot)
-    path = move_in_angle!(r)
-    putmarker!(r)
-    move_back_to_start!(r,path)
 end
