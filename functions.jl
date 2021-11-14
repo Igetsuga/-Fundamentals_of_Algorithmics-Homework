@@ -45,7 +45,7 @@ end
 global Steps = []
 global Sides = []
 
-function move_back!(robot::Robot, Steps::Vector, Sides::Vector)::Nothing
+function get_back!(robot::Robot, Steps::Vector, Sides::Vector)::Nothing
     for i in 1:length(Steps)
         for step in 1:Steps[i]
             move!(robot, anti_side(HorizonSide(Sides[i])))
