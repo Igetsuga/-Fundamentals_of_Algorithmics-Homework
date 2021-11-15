@@ -1,5 +1,4 @@
-using HorizonSideRobots
-originRobot = Robot(animate = true)
+
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
@@ -73,28 +72,26 @@ get(robot::Beta) = robot.beta
 
 
 function move!(robot::Beta, side::HorizonSide)
-    push!(path, side)
+    push!(robot.path, Int(side))
     move!(robot.beta, side)
 end
 
-function move_back!(robot::Beta, path::Vector)::Nothing
-    for i in 1:length(path)
-        move!(robot.beta, anti_side(HorizonSide(path[ length(path) - i + 1 ])))
+function get_back!(robot::Beta)
+    for i in 1:length(robot.path)
+        move!(robot.beta, anti_side(HorizonSide(robot.path[ length(robot.path) - i + 1 ])))
     end
-    empty!(Steps)
-    empty!(Sides)
+    empty!(robot.path)
 end
 
 function try_move!(robot::Beta, side::HorizonSide)::Bool
 
     # если перед роботом есть перегородка, он начнет выполнять действия, чтобы попытаться её обойти, иначе просто пройдет в заданном направлении
-    if isborder(robot, side)
-        flag_nextside = true
+    if isborder(robot.beta, side)
         steps = 0
         nextside = next_side(side)
         # робот пытается обойти перегородку со строны, которая следует за заданной по часовой стрелке
-        while isborder(robot, side)
-            if !isborder(robot, nextside)
+        while isborder(robot.beta, side)
+            if !isborder(robot.beta, nextside)
                 move!(robot, nextside)
                 steps += 1
             else
@@ -102,29 +99,29 @@ function try_move!(robot::Beta, side::HorizonSide)::Bool
                 for j in 1:steps
                     move!(robot, anti_side(nextside))
                 end
-
-                flag_nextside = false
-
                 return false
             end
         end
 
         # если у робота получилось обойти перегородку с первого раза, будет выполнено слудущее:
-        if (flag_nextside) 
+        move!(robot, side)
+        while isborder(robot.beta, anti_side(nextside))
             move!(robot, side)
-            while isborder(robot, anti_side(nextside))
-                move!(robot, side)
-            end
-            move_steps!(robot, anti_side(nextside), steps)
-
-            return true
         end
+
+        for j in 1:steps
+            move!(robot, anti_side(nextside))
+        end
+        return true
+        
     else
         # перегородки не было, робот прошел в заданном направлении
-        move!(robot,side)
+        move!(robot, side)
         return true
     end
 end
+
+#------------------------------------------------------------------------------------------------------------------------------#
     
 
 
