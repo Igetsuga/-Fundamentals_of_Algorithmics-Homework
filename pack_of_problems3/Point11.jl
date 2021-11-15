@@ -9,7 +9,7 @@
 ```
 
 using HorizonSideRobots
-originRobot = Robot(animate = true)
+originRobot = Robot(animate = true,"11example.sit")
 include("AbstractType.jl")
 include("functions.jl")
 
