@@ -1,4 +1,4 @@
-```
+#=
 anti_side
 next_side
 next_side_pr
@@ -7,13 +7,15 @@ moving_defsteps!
 
 move_back!
 
-moving_in_angle!
+moving_in_angle!(robot::Robot)
+moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide)
 moving_back_to_start!
+
 
 try_move_var2!
 try_move!
 
-```
+=#
 #------------------------------------------------------------------------------------------------------------------------------#
 
 function anti_side(side::HorizonSide)::HorizonSide
@@ -52,7 +54,7 @@ end
 #------------------------------------------------------------------------------------------------------------------------------#
 
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
-function moving_in_angle!(robot::Robot)
+function moving_in_angle!(robot::Robot)::Vector{Int}
     back_path = []
     while (!(isborder(robot, West)) || !(isborder(robot, Sud)))
         for side in (Sud, West)
@@ -66,7 +68,7 @@ function moving_in_angle!(robot::Robot)
 end
 
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
-function moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide)
+function moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide)::Vector{Int}
     back_path = []
     while (!(isborder(robot, side1)) || !(isborder(robot, side2)))
         for side in (side1, side2)
@@ -112,7 +114,7 @@ function try_move_var2!(robot::Robot, side::HorizonSide)::Bool
         move!(robot, side)
     end
 
-    move_steps!(robot, anti_side(nextside), steps)
+    moving_defsteps!(robot, anti_side(nextside), steps)
     move!(robot,side)
     return true
 end
@@ -150,7 +152,7 @@ function try_move!(robot::Robot, side::HorizonSide)::Bool
             while isborder(robot, anti_side(nextside))
                 move!(robot, side)
             end
-            move_steps!(robot, anti_side(nextside), steps)
+            moving_defsteps!(robot, anti_side(nextside), steps)
 
             return true
         end
