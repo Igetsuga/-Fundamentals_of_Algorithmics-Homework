@@ -56,12 +56,10 @@ function moving_in_angle!(robot::Robot)
     back_path = []
     while (!(isborder(robot, West)) || !(isborder(robot, Sud)))
         for side in (Sud, West)
-            steps = 0
             while (!(isborder(robot,side)))
                 move!(robot,side)
-                steps += 1
+                push!(back_path, Int(side))
             end
-            push!(back_path, steps)
         end
     end
     return reverse!(back_path)
@@ -69,10 +67,8 @@ end
 
 # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
 function moving_back_to_start!(robot::Robot, back_path::Vector)::Nothing
-    for (index,value) in enumerate(back_path)
-        for step in 1:value
-            move!(robot, HorizonSide((((index + 1)% 2) + 3) % 4))
-        end
+    for i in 1:length(back_path)
+        move!(robot, anti_side(HorizonSide(back_path[i])))
     end
 end
 
