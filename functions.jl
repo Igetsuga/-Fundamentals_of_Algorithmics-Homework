@@ -42,17 +42,11 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-global Steps = []
-global Sides = []
-
-function get_back!(robot::Robot, Steps::Vector, Sides::Vector)::Nothing
-    for i in 1:length(Steps)
-        for step in 1:Steps[i]
-            move!(robot, anti_side(HorizonSide(Sides[i])))
-        end
+function get_back!(robot::Robot, path::Vector{Int})
+    for i in 1:length(path)
+        move!(robot, anti_side(HorizonSide(path[ length(path) - i + 1 ])))
     end
-    empty!(Steps)
-    empty!(Sides)
+    empty!(path)
 end
 
 #------------------------------------------------------------------------------------------------------------------------------#
