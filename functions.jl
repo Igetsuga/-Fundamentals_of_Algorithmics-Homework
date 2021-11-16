@@ -65,6 +65,20 @@ function moving_in_angle!(robot::Robot)
     return reverse!(back_path)
 end
 
+# moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
+function moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide)
+    back_path = []
+    while (!(isborder(robot, side1)) || !(isborder(robot, side2)))
+        for side in (side1, side2)
+            while (!(isborder(robot,side)))
+                move!(robot,side)
+                push!(back_path, Int(side))
+            end
+        end
+    end
+    return reverse!(back_path)
+end
+
 # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
 function moving_back_to_start!(robot::Robot, back_path::Vector)::Nothing
     for i in 1:length(back_path)
