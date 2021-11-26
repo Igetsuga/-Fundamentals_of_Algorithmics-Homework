@@ -15,7 +15,8 @@ UPD. Для кошмарных внутренних перегородок мо�
 обхода периметра robota.beta = originRobot 
 
 ```
-
+using HorizonSideRobots
+originRobot = Robot(animate = true,"11example.sit")
 include("../AbstractType.jl")
 include("../functions.jl")
 
