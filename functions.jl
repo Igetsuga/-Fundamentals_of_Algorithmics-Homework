@@ -44,12 +44,40 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
+function moveToBorder!(robot::Robot, side)::Nothing
+    while (!isborder(robot, side))
+        move!(robot, side)
+    end
+end
+
+#------------------------------------------------------------------------------------------------------------------------------#
+
+function moveLikeSnake!(robot::Robot, sides::NTuple{2,HorizonSide}, side::HorizonSide)::Nothing
+    if (isborder(robot, sides[1]))
+        moveToBorder!(robot, sides[2])
+        if (!isborder(robot, side))
+            move!(robot, side)
+        end
+    else
+        moveToBorder!(robot, sides[1])
+        if (!isborder(robot, side))
+            move!(robot, side)
+        end
+    end
+end
+
+#------------------------------------------------------------------------------------------------------------------------------#
+
 function get_back!(robot::Robot, path::Vector{Int})
     for i in 1:length(path)
         move!(robot, anti_side(HorizonSide(path[ length(path) - i + 1 ])))
     end
     empty!(path)
 end
+
+#------------------------------------------------------------------------------------------------------------------------------#
+
+
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
