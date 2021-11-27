@@ -16,7 +16,7 @@ UPD. Для кошмарных внутренних перегородок мо�
 
 ```
 using HorizonSideRobots
-originRobot = Robot(animate = true,"11example.sit")
+originRobot = Robot(animate = true,"15example.sit")
 include("../AbstractType.jl")
 include("../functions.jl")
 
@@ -44,6 +44,7 @@ function master(robot::Robot)
     moving_back_to_start!(robot, back_path)    
 end
 
+master!(originRobot)
 
 
 
