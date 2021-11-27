@@ -1,5 +1,7 @@
 
 
+
+
 #------------------------------------------------------------------------------------------------------------------------------#
 
 abstract type AbstractRobot end
@@ -227,4 +229,22 @@ function moving_back_to_start!(robot::Gamma, back_path::Vector)::Nothing
 end
 
 #------------------------------------------------------------------------------------------------------------------------------#
+
+struct Alpha{TypeRobot} 
+    alpha::TypeRobot
+end
+
+alpha = Alpha(originRobot)
+
+get(robot::Alpha) = robot.alpha
+
+#=
+function try_move!(robot::PutmarkersRobot, side)::Bool
+    result = try_move!(robot.robot, side)
+    if result
+        putmarker!(robot.robot) # предполагается, что для каждого возможного конкретного типа TypeRobot определен метод putmarker!
+    end
+    return result
+end
+=#
 
