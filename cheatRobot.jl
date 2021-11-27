@@ -177,7 +177,7 @@ mutable struct CheatRobot <:AbstractRobot
         end
     end
     # -----------------------------------------------------------------------------------------------------
-    CheatRobot = new()
+    
 end
 
 
