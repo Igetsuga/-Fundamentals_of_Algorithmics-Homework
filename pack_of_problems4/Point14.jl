@@ -10,8 +10,8 @@
 
 ```
 
-#using HorizonSideRobots
-#originRobot = Robot(animate = true)
+using HorizonSideRobots
+originRobot = Robot(animate = true, "14example.sit")
 include("../AbstractType.jl")
 include("../functions.jl")
 
@@ -26,4 +26,5 @@ function master!(robot::Beta)
     putmarker!(robot.beta)
 end
 
+master!(beta)
 
