@@ -5,7 +5,8 @@
 """
 
 using HorizonSideRobots
-#originRobot = Robot(animate = true, "20example.sit")
+originRobot = Robot(animate = false, "21example.sit")
+show!(originRobot)
 include("../AbstractType.jl")
 include("../functions.jl")
 
@@ -27,30 +28,32 @@ function mod_moveToBorder!(robot::Robot, moveSide::HorizonSide, borderSide::Hori
 end
 
 function mod_moveLikeSnake!(robot::Robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Integer
-    if (isborder(robot, moveSides[1]))
-        return mod_moveToBorder!(robot, moveSides[2], borderSide)
-    else
-        return mod_moveToBorder!(robot, moveSides[1], borderSide)
+    bordersInLine = 0
+    for side in moveSides
+        bordersInLine += mod_moveToBorder!(robot, side, borderSide)
+        if !(isborder(robot, borderSide))
+            move!(robot, borderSide)
+        else
+            break
+        end 
     end
+    return bordersInLine
 end
 
 function master!(robot::Robot)
     numberOfBorders = 0
     backPath = moving_in_angle!(robot, West, Sud)
     while !isborder(robot, Nord)
-        numberOfBorders += mod_moveLikeSnake!(robot, (West, Ost), Nord)
-        if (!isborder(robot, Nord))
-            move!(robot, Nord)
-        end
+        numberOfBorders += mod_moveLikeSnake!(robot, (Ost, West), Nord)
+        #println(numberOfBorders)
     end
+    
 
     moving_in_angle!(robot, West, Sud)
 
     while !isborder(robot, Ost)
-        numberOfBorders += mod_moveLikeSnake!(robot, (Nord, Sud), Sud)
-        if (!isborder(robot, Ost))
-            move!(robot, Ost)
-        end
+        numberOfBorders += mod_moveLikeSnake!(robot, (Nord, Sud), Ost)
+        #println(numberOfBorders)
     end
 
     moving_in_angle!(robot, West, Sud)
@@ -61,3 +64,4 @@ function master!(robot::Robot)
 end
 
 master!(originRobot)
+

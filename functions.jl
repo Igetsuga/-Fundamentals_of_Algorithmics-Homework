@@ -18,6 +18,13 @@ try_move!
 =#
 #------------------------------------------------------------------------------------------------------------------------------#
 
+ost(side::HorizonSide) = Ost 
+west(side::HorizonSide) = West 
+sud(side::HorizonSide) = Sud 
+nord(side::HorizonSide) = Nord 
+
+#------------------------------------------------------------------------------------------------------------------------------#
+
 function anti_side(side::HorizonSide)::HorizonSide
     return HorizonSide((Int(side) + 2) % 4)
 end
@@ -52,18 +59,17 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function moveLikeSnake!(robot::Robot, sides::NTuple{2,HorizonSide}, side::HorizonSide)::Nothing
-    if (isborder(robot, sides[1]))
-        moveToBorder!(robot, sides[2])
-        if (!isborder(robot, side))
-            move!(robot, side)
+function moveLikeSnake!(robot::Robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+    while !(isborder(robot, borderSide))
+        for side in moveSides
+            moveToBorder!(robot, side)
+            if !(isborder(robot, borderSide))
+                move!(robot, borderSide)
+            else
+                break
+            end
         end
-    else
-        moveToBorder!(robot, sides[1])
-        if (!isborder(robot, side))
-            move!(robot, side)
-        end
-    end
+    end    
 end
 
 #------------------------------------------------------------------------------------------------------------------------------#
