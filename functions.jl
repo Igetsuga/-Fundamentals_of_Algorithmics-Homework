@@ -17,6 +17,10 @@ try_move!
 
 =#
 #------------------------------------------------------------------------------------------------------------------------------#
+function anti_side(side::HorizonSide)::HorizonSide end
+function next_side(side::HorizonSide)::HorizonSide end
+function next_side_pr(side::HorizonSide)::HorizonSide end
+#------------------------------------------------------------------------------------------------------------------------------#
 
 ost(side::HorizonSide) = Ost 
 west(side::HorizonSide) = West 
@@ -31,13 +35,13 @@ end
 
 
 # по часовой 
-function next_side(side::HorizonSide)
+function next_side(side::HorizonSide)::HorizonSide
     return anti_side(HorizonSide((Int(side) + 1) % 4))
 end
 
 
 # против часовой
-function next_side_pr(side::HorizonSide)
+function next_side_pr(side::HorizonSide)::HorizonSide
     return HorizonSide((Int(side) + 1) % 4)
 end
 
@@ -83,8 +87,65 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
+# вычислит площадь перегородки в направлении движения робота и обойдет её
+function square(robot::Robot, moveSide::HorizonSide)::Integer
+    square = 0
+    height = 0
+    width = 0
+    stepsToBack = 0
+    reqBorder = anti_side(moveSide)
+    # можно было через while сделать: задать итератор = 4, и при каждом проходе по циклу менять значение side на next_side_pr(side)
+    for side in [reqBorder, next_side_pr(reqBorder), next_side_pr(next_side_pr(reqBorder)), anti_side(next_side_pr(reqBorder))]
+        while isborder(robot, side)
+            if (side == next_side_pr(reqBorder))
+                width += 1
+            elseif (side == next_side_pr(next_side_pr(reqBorder)))
+                height += 1
+            elseif (side == reqBorder)
+                stepsToBack += 1
+            end
+            move!(robot, next_side(side))
+        end
+        move!(robot, side)
+    end
+    for _ in 1:(height - stepsToBack)
+        move!(robot, next_side_pr(moveSide))
+    end
+    return height * width
+end
 
+#------------------------------------------------------------------------------------------------------------------------------#
 
+function AverangeTemperature(robot::Robot, moveSide::HorizonSide)::Real
+    averageTemperature = 0
+    numOfsquares = 0
+    height = 0
+    stepsToBack = 0
+    tempBorderSide = anti_side(moveSide)
+    for _ in 1:4
+        while isborder(robot, tempBorderSide)
+            if (isborder(robot, tempBorderSide))
+                numOfsquares += 1
+                averageTemperature =+ temperature(robot)
+                if (tempBorderSide == next_side_pr(next_side_pr(anti_side(moveSide))))
+                    height += 1 
+                elseif (tempBorderSide == anti_side(moveSide))
+                    stepsToBack += 1
+                end
+            end
+            move!(robot, next_side(tempBorderSide))
+        end
+        move!(robot, tempBorderSide)
+        tempBorderSide = next_side_pr(tempBorderSide)
+    end
+    for _ in 1:(height - stepsToBack)
+        move!(robot, next_side_pr(moveSide))
+        numOfsquares += 1
+        averageTemperature =+ temperature(robot)
+    end
+    averageTemperature = ( averageTemperature - temperature(robot) ) / (numOfsquares - 1)
+    return averageTemperature
+end
 #------------------------------------------------------------------------------------------------------------------------------#
 
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
