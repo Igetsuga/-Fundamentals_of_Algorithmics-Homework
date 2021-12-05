@@ -39,22 +39,25 @@ function mod_moveToBorder!(robot::Robot, moveSide::HorizonSide, borderSide::Hori
     return bordersInLine 
 end
 
-function mod_moveLikeSnake!(robot::Robot, moveSides::NTuple{2,HorizonSide})::Integer
-    if (isborder(robot, moveSides[1]))
-        return mod_moveToBorder!(robot, moveSides[2], Nord)
-    else
-        return mod_moveToBorder!(robot, moveSides[1], Nord)
+function mod_moveLikeSnake!(robot::Robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Integer
+    bordersInLine = 0
+    for side in moveSides
+        bordersInLine += mod_moveToBorder!(robot, side, borderSide)
+        println(bordersInLine)
+        if !(isborder(robot, borderSide))
+            move!(robot, borderSide)
+        else
+            break
+        end 
     end
+    return bordersInLine
 end
 
-function master!(robot::Robot)
+function master20!(robot::Robot)
     numberOfBorders = 0
     backPath = moving_in_angle!(robot, West, Sud)
     while !isborder(robot, Nord)
-        numberOfBorders += mod_moveLikeSnake!(robot, (West, Ost))
-        if (!isborder(robot, Nord))
-            move!(robot, Nord)
-        end
+        numberOfBorders += mod_moveLikeSnake!(robot, (Ost, West), Nord)
     end
 
     moving_in_angle!(robot, West, Sud)
@@ -63,5 +66,5 @@ function master!(robot::Robot)
     return numberOfBorders
 end
 
-master!(originRobot)
+master20!(originRobot)
 
