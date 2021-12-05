@@ -33,12 +33,14 @@ end
 function master!(robot::Robot)::Integer
     maxSquare = 0
     tempReqSquare = 0
+    squares = Set()
     while !(isborder(robot, Nord))
         for side in [Ost, West]
             while true
                 if isborder(robot, side)
                     if try_move!(robot, side)
                         tempReqSquare = square(robot, side)
+                        push!(squares, tempReqSquare)
                         if tempReqSquare > maxSquare 
                             maxSquare = tempReqSquare
                             # можно написать очень похожую на square функцию, которая бы ещё и обвела этит прямоугольник
@@ -55,7 +57,8 @@ function master!(robot::Robot)::Integer
             end
         end
     end
-    return maxSquare
+    println(squares)
+    return maxSquare 
 end
 
 master!(originRobot)
