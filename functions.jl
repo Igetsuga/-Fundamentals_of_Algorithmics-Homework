@@ -1,47 +1,43 @@
-#=
-anti_side
-next_side
-next_side_pr
-
-moving_defsteps!
-
-move_back!
-
-moving_in_angle!(robot::Robot)
-moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide)
-moving_back_to_start!
-
-
-
-try_move_var2!
-try_move!
-
-=#
-#------------------------------------------------------------------------------------------------------------------------------#
-function anti_side(side::HorizonSide)::HorizonSide end
-function next_side(side::HorizonSide)::HorizonSide end
-function next_side_pr(side::HorizonSide)::HorizonSide end
-#------------------------------------------------------------------------------------------------------------------------------#
-
-function square(robot::Robot, moveSide::HorizonSide)::Integer end
-function AverangeTemperature(robot::Robot, moveSide::HorizonSide)::Real end
-
-#------------------------------------------------------------------------------------------------------------------------------#
-
 function isangle!(robot)::Bool end 
 
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function anti_side(side::HorizonSide)::HorizonSide end
+function next_side(side::HorizonSide)::HorizonSide end
+function next_side_pr(side::HorizonSide)::HorizonSide end
+
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function moving_defsteps!(robot, side::HorizonSide, steps::Integer)::Nothing end
+
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function moveToBorder!(robot, side)::Nothing end
+
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing end
+
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function get_back!(robot, path::Vector{Int}) end
+
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function square(robot, moveSide::HorizonSide)::Integer end
+function AverangeTemperature(robot, moveSide::HorizonSide)::Real end
+
 #------------------------------------------------------------------------------------------------------------------------------#
+
+function moving_in_angle!(robot)::Vector{Int} end
+function moving_in_angle!(robot, side1::HorizonSide, side2::HorizonSide)::Vector{Int} end
+function moving_back_to_start!(robot, back_path::Vector)::Nothing end
+
 #------------------------------------------------------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------------------------------------------------------#
+
+function try_move_var2!(robot, side::HorizonSide)::Bool end
+function try_move!(robot, side::HorizonSide)::Bool end
+
 #------------------------------------------------------------------------------------------------------------------------------#
 
 ost(side::HorizonSide) = Ost 
@@ -83,7 +79,7 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function moving_defsteps!(robot::Robot, side::HorizonSide, steps::Integer)::Nothing
+function moving_defsteps!(robot, side::HorizonSide, steps::Integer)::Nothing
     for step in 1:steps
         move!(robot, side)
     end
@@ -91,7 +87,7 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function moveToBorder!(robot::Robot, side)::Nothing
+function moveToBorder!(robot, side)::Nothing
     while (!isborder(robot, side))
         move!(robot, side)
     end
@@ -99,7 +95,7 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function moveLikeSnake!(robot::Robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
     while !(isborder(robot, borderSide))
         for side in moveSides
             moveToBorder!(robot, side)
@@ -114,7 +110,7 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function get_back!(robot::Robot, path::Vector{Int})
+function get_back!(robot, path::Vector{Int})
     for i in 1:length(path)
         move!(robot, anti_side(HorizonSide(path[ length(path) - i + 1 ])))
     end
@@ -124,7 +120,7 @@ end
 #------------------------------------------------------------------------------------------------------------------------------#
 
 # вычислит площадь перегородки в направлении движения робота и обойдет её
-function square(robot::Robot, moveSide::HorizonSide)::Integer
+function square(robot, moveSide::HorizonSide)::Integer
     square = 0
     height = 0
     width = 0
@@ -151,7 +147,7 @@ function square(robot::Robot, moveSide::HorizonSide)::Integer
 end
 
 
-function AverangeTemperature(robot::Robot, moveSide::HorizonSide)::Real
+function AverangeTemperature(robot, moveSide::HorizonSide)::Real
     averageTemperature = 0
     numOfsquares = 0
     height = 0
@@ -184,7 +180,7 @@ end
 #------------------------------------------------------------------------------------------------------------------------------#
 
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
-function moving_in_angle!(robot::Robot)::Vector{Int}
+function moving_in_angle!(robot)::Vector{Int}
     back_path = []
     while (!(isborder(robot, West)) || !(isborder(robot, Sud)))
         for side in (Sud, West)
@@ -198,7 +194,7 @@ function moving_in_angle!(robot::Robot)::Vector{Int}
 end
 
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
-function moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide)::Vector{Int}
+function moving_in_angle!(robot, side1::HorizonSide, side2::HorizonSide)::Vector{Int}
     back_path = []
     while (!(isborder(robot, side1)) || !(isborder(robot, side2)))
         for side in (side1, side2)
@@ -212,7 +208,7 @@ function moving_in_angle!(robot::Robot, side1::HorizonSide, side2::HorizonSide):
 end
 
 # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
-function moving_back_to_start!(robot::Robot, back_path::Vector)::Nothing
+function moving_back_to_start!(robot, back_path::Vector)::Nothing
     for i in 1:length(back_path)
         move!(robot, anti_side(HorizonSide(back_path[i])))
     end
@@ -220,7 +216,7 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function try_move_var2!(robot::Robot, side::HorizonSide)::Bool
+function try_move_var2!(robot, side::HorizonSide)::Bool
     steps = 0
     nextside = next_side_pr(side)
     # робот пытается обойти перегодку со стороны противоположной часовой стрелке
@@ -251,7 +247,7 @@ end
 
 
 
-function try_move!(robot::Robot, side::HorizonSide)::Bool
+function try_move!(robot, side::HorizonSide)::Bool
 
     # если перед роботом есть перегородка, он начнет выполнять действия, чтобы попытаться её обойти, иначе просто пройдет в заданном направлении
     if isborder(robot,side)
