@@ -6,43 +6,38 @@
 
 ```
 
+
 using HorizonSideRobots
-r = Robot(animate = true)
-include("../cheatRobot.jl")
 
-# isMark определяет жесть ли в клетке маркер, если да, то добавляет к answer температуру и увеличивает счетчик
-function isMark(r::Robot)::Nothing
-    if (ismarker(r))
-        answer[1] += temperature(r)
-        answer[2] += 1
-    end
-end
+originRobot = Robot(animate = false, "10example.sit")
+mod_CmR = MODcountmarkersRobot(originRobot,0,0)
 
-# змейка с try_move! и isMark 
-function move_like_snake!(r::Robot)
-    while !(isborder(r,Ost))
-        for side in [Nord, Sud]
-            while !isborder(r,side)
-                try_move!(r,side)
-                isMark(r)
+show!(originRobot)
+include("../AbstractType.jl")
+include("../functions.jl")
+
+function moveLikeSnake!(robot::MODcountmarkersRobot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+    flag = true
+    while flag
+        for side in moveSides
+            while !(isborder(robot.robot, side))
+                move!(robot, side)
             end
-            if !isborder(r,Ost)
-                try_move!(r,Ost)
-                isMark(r)
+            if !(isborder(robot.robot, borderSide))
+                move!(robot, borderSide)
             else
-                continue
+                flag = false
             end
         end
-    end
+    end    
 end
 
 
 # master главная функция программа
-function Point10_master!(r::Robot)::Integer
-    global answer = [0,0]
-    isMark(r)
-    move_like_snake!(r)
-    return ( answer[1] / answer[2] )
+function master!(robot::MODcountmarkersRobot)::Real
+    moveLikeSnake!(robot, (Nord, Sud), Ost)
+    return (robot.temperature / robot.markers)
 end
 
+master!(mod_CmR)
 
