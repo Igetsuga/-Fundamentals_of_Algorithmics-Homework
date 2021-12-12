@@ -8,7 +8,7 @@ abstract type AbstractRobot end
 
 import HorizonSideRobots: move!, isborder, putmarker!, ismarker, temperature
 
-get(robot::AbstractRobot) = robot::Robot
+#get(robot::AbstractRobot) = robot::Robot
 
 move!(robot::AbstractRobot, side) = move!(get(robot), side)
 isborder(robot::AbstractRobot, side) = isborder(get(robot), side)
@@ -134,8 +134,6 @@ gamma = Gamma(originRobot)
 get(robot::Gamma) = robot.gamma
 
 
-
-
 function try_move_var2!(robot::Robot, side::HorizonSide)::Bool
     steps = 0
     nextside = next_side_pr(side)
@@ -248,3 +246,45 @@ function try_move!(robot::PutmarkersRobot, side)::Bool
 end
 =#
 
+#------------------------------------------------------------------------------------------------------------------------------#
+
+#=mutable struct CountmarkersAndTemperatureRobot <: CountmarkersRobot
+    robot::CountmarkersRobot
+    temperature::Real
+end
+
+getTemperature(robot::CountmarkersAndTemperatureRobot) = robot.temperature
+getCountOfMarkers(robot::CountmarkersAndTemperatureRobot) = robot.CmR.counter
+
+CmR = CountmarkersRobot(originRobot,0)
+markerAndTemperature = CountmarkersAndTemperatureRobot(CmR, 0)
+
+function move!(robot::CountmarkersAndTemperatureRobot)
+    move!(markerAndTemperature.robot.CmR, side)
+    if (ismarker(rmarkerAndTemperature.robot.CmR))
+        markerAndTemperature.robot.counter += 1
+        markerAndTemperature.temperature += temperature(markerAndTemperature.robot.CmR)
+    end
+end=#
+
+
+
+mutable struct MODcountmarkersRobot <: AbstractRobot
+    robot::Robot
+    markers::Integer
+    temperature::Real
+end
+
+mod_CmR = MODcountmarkersRobot(originRobot,0,0)
+
+getTemperature(robot::MODcountmarkersRobot) = robot.temperature
+getCountOfMarkers(robot::MODcountmarkersRobot) = robot.markers
+
+
+function move!(robot::MODcountmarkersRobot, side::HorizonSide)
+    move!(robot.robot, side)
+    if (ismarker(robot.robot))
+        robot.markers += 1
+        robot.temperature += temperature(robot.robot)
+    end
+end
