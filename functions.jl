@@ -110,7 +110,7 @@ end
 
 #------------------------------------------------------------------------------------------------------------------------------#
 
-function get_back!(robot, path::Vector{Int})
+function get_back!(robot, path::Vector{Any})
     for i in 1:length(path)
         move!(robot, anti_side(HorizonSide(path[ length(path) - i + 1 ])))
     end
