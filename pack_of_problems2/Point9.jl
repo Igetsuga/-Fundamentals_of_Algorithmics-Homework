@@ -7,23 +7,22 @@
 
 ```
 using HorizonSideRobots
-r = Robot(animate = true)
-include("../cheatRobot.jl")
+originRobot = Robot(animate = true, "9example.sit")
 
 # будем ходить кругом, пока не найжем этот маркер.
 # 1 Вниз, 2 Вправо, 2 Вверх, 3 Влево, 3 Вниз, 4 Вправо, 4 Вверх и тд.
-function Point9_master!(r::Robot)
+function master9!(robot::Robot)
     flag = false
     steps = 0
-    if (ismarker(r))
+    if (ismarker(robot))
         return true
     else 
-        while !ismarker(r)
+        while !ismarker(robot)
             for side in [Ost, Nord, West, Sud]
-                steps += 1*(side==Ost || side==West)
+                steps += 1*(side == Ost || side == West)
                 for step in 1:steps
-                    move!(r,side)
-                    if (ismarker(r))
+                    move!(robot,side)
+                    if (ismarker(robot))
                         return true
                     end
                 end
@@ -31,6 +30,5 @@ function Point9_master!(r::Robot)
         end
     end
 end
-    
 
-
+master9!(originRobot)
