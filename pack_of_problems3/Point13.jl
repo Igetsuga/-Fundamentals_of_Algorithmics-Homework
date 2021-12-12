@@ -9,27 +9,30 @@
 """
 
 using HorizonSideRobots
-include("../use.jl")
+originRobot = Robot(animate = true, "13example.sit")
+#show!(originRobot)
+include("../AbstractType.jl")
+include("../functions.jl")
+
 
 function get_line_of_cross!(robot::Robot, sides)
-
+    path = []
     while ! ( isborder(robot,sides[1]) || isborder(robot, sides[2]) )
         for side in sides
             if (!isborder(robot,side))
                 move!(robot, side)
-                push!(Steps,1)
-                push!(Sides,Int(side))
+                push!(path,Int(side))
             else
                 continue
             end
         end
         putmarker!(robot)
     end
-    move_back!(robot,Steps,Sides)
+    get_back!(robot, path)
 end
 
 
-function Point_13_master!(robot::Robot)::Nothing
+function master13!(robot::Robot)::Nothing
 
     for sides in [ [West,Sud], [West,Nord], [Ost,Sud], [Ost,Nord] ]
         get_line_of_cross!(robot, sides)
@@ -38,5 +41,5 @@ function Point_13_master!(robot::Robot)::Nothing
     putmarker!(robot)
 end
 
-    
+master13!(originRobot)
 
