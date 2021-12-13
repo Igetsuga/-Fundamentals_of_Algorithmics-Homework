@@ -5,31 +5,26 @@
 
 ```
 using HorizonSideRobots
-r = Robot(animate = true)
-include("../cheatRobot.jl")
+originRobot = Robot(animate = true, "8example.sit")
+include("../AbstractType.jl")
+include("../functions.jl")
 
-function Point8_master!(r::Robot)
-    flag = false
-    counter = 1
-    if (isborder(r,Nord))
-        while (isborder(r,Nord))
-            for side in [West,Ost]
-                for steps in 1:counter
-                    move!(r, side)
-                    if !isborder(r, Nord)
-                        move!(r,Nord)
-                        flag = true
-                        break
-                    end
-                end
-                counter += 1
-            end
-            if flag 
+
+function master8!(robot::Robot)
+    steps = 0
+    flag = true
+    while flag
+        for side in [Ost, West]
+            moving_defsteps!(robot, side, steps)
+            if !isborder(robot, Nord)
+                move!(robot, Nord)
+                flag = false
                 break
+            else
+                steps += 1
             end
         end
-    else
-        move!(r,Nord)
-        flag = true
     end
 end
+
+master8!(originRobot)
