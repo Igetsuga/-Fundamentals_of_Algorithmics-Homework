@@ -13,17 +13,28 @@ include("../functions.jl")
 
 
 function test1(robot::Robot, borderSide::HorizonSide)
-    for _ in 1:4
-        while (isborder(robot, borderSide) && !ismarker(robot))
+    height = 0
+    width = 0
+    stepsToBack = 0
+    reqBorder = borderSide
+    # можно было через while сделать: задать итератор = 4, и при каждом проходе по циклу менять значение side на next_side_pr(side)
+    for side in [reqBorder, next_side_pr(reqBorder), next_side_pr(next_side_pr(reqBorder)), anti_side(next_side_pr(reqBorder))]
+        while isborder(robot, side)
+            if (side == next_side_pr(next_side_pr(reqBorder)))
+                height += 1
+            elseif (side == reqBorder)
+                stepsToBack += 1
+            end
+            move!(robot, next_side(side))
             putmarker!(robot)
-            move!(robot, next_side_pr(borderSide))
-            
         end
+        move!(robot, side)
         putmarker!(robot)
-        move!(robot, borderSide)
-        borderSide = next_side(borderSide)
     end
-    putmarker!(robot)
+    for _ in 1:(height - stepsToBack)
+        move!(robot, next_side_pr(moveSide))
+        putmarker!(robot)
+    end
 end
 
 function findReq(robot::Robot, moveSide::HorizonSide)
@@ -53,7 +64,7 @@ function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::Hor
                 if (!isborder(robot, side))
                     move!(robot,side)
                 elseif !(findReq(robot, side))
-                    println("stop there")
+                    #println("stop there")
                     break 
                 else 
                     flag = true
