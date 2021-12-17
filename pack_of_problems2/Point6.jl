@@ -6,23 +6,81 @@
 ```
 
 using HorizonSideRobots
-r = Robot(animate=true)
-include("../cheatRobot.jl")
+originRobot = Robot(animate = true, "6example.sit")
+include("../AbstractType.jl")
+include("../functions.jl")
 
-# perimeteroid! двигает робота по переметру квадрата и проставляет маркеры
-function perimeteroid!(r::Robot)::Nothing
-    for side in [Nord, Ost, Sud, West]
-        while (!(isborder(r,side)))
-            putmarker!(r)
-            move!(r,side)
+
+
+function test1(robot::Robot, borderSide::HorizonSide)
+    for _ in 1:4
+        while (isborder(robot, borderSide) && !ismarker(robot))
+            putmarker!(robot)
+            move!(robot, next_side_pr(borderSide))
+            
         end
+        putmarker!(robot)
+        move!(robot, borderSide)
+        borderSide = next_side(borderSide)
+    end
+    putmarker!(robot)
+end
+
+function findReq(robot::Robot, moveSide::HorizonSide)
+    if isborder(robot, moveSide) && !isangle!(robot)
+        isReq = false
+        steps = 0
+        while isborder(robot, moveSide) && !isborder(robot, next_side_pr(moveSide))
+            move!(robot, next_side_pr(moveSide))
+            steps += 1
+        end
+        if !isborder(robot, next_side_pr(moveSide))
+            isReq = true
+        end
+        moving_defsteps!(robot, anti_side(next_side_pr(moveSide)), steps)
+        return isReq
+    else
+        return false
     end
 end
 
 
+function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+    flag = false
+    while !(isborder(robot, borderSide)) && !(flag) 
+        for side in moveSides
+            while !flag
+                if (!isborder(robot, side))
+                    move!(robot,side)
+                elseif !(findReq(robot, side))
+                    println("stop there")
+                    break 
+                else 
+                    flag = true
+                    break
+                end
+            end
+
+            if flag 
+                test1(robot, side)
+                break
+            end
+
+            if !(isborder(robot, borderSide))
+                move!(robot, borderSide)
+            else
+                break
+            end
+        end
+    end    
+end
+
 # master! главная функция программы
-function Point6_master!(r::Robot)::Nothing
-    back_path = moving_in_angle!(r)
-    perimeteroid!(r)
-    moving_back_to_start!(r, back_path)
+function master6!(robot::Robot)::Nothing
+    back_path = moving_in_angle!(robot)
+
+    moveLikeSnake!(robot, (Nord, Sud), Ost)
+
+    moving_in_angle!(robot)
+    moving_back_to_start!(robot, back_path)
 end
