@@ -11,23 +11,28 @@
 на наличие маркера в клетке, стоящей на пути Робота.
 ```
 
+using HorizonSideRobots
+originRobot = Robot(animate = true, "1example.sit")
+
 # get_line! создаёт линию из маркеров в заданном направлении и возвращает Робота в исходное положение
-function get_line!(side)::Nothing
+function get_line!(robot, side)::Nothing
     steps = 0
-    while ((isborder(r,side))==false)
-        move!(r,side)
-        putmarker!(r)
+    while ((isborder(robot,side))==false)
+        move!(robot,side)
+        putmarker!(robot)
         steps += 1
     end
     for j in 1:steps 
-        move!(r,HorizonSide((Int(side)+2)%4))
+        move!(robot, HorizonSide((Int(side)+2)%4))
     end
 end
 
 # Point1_master! главная функция программы
-function Point1_master!(r::Robot)::Nothing
+function Point1_master!(robot::Robot)::Nothing
     for side in [Nord, Ost, Sud, West]
-        get_line!(side)
+        get_line!(robot, side)
     end
-    putmarker!(r)
+    putmarker!(robot)
 end
+
+Point1_master!(originRobot)
