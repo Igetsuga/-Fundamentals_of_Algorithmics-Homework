@@ -9,7 +9,7 @@
 coords = []
 
 using HorizonSideRobots
-originRobot = Robot(animate = true)
+originRobot = Robot(animate = true, "2example.sit")
 include("../functions.jl")
 
 # get_line! создаёт линию из маркеров
@@ -30,3 +30,5 @@ function master2!(robot::Robot)::Nothing
 
     moving_back_to_start!(robot, back_path)
 end
+
+master2!(originRobot)
