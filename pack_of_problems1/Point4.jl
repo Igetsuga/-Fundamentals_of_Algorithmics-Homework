@@ -6,7 +6,18 @@
 """
 
 using HorizonSideRobots
+originRobot = Robot(animate = true)
+include("../functions.jl")
+
+# get_back_smpl возвращает робота к стене обратно заданному направлению, если на пути нет перегородок
+get_back_smpl!(robot::Robot,side::HorizonSide)::Nothing
+    while (!(isborder(robot,side)))
+        move!(robot,side)
+    end
+end
+
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
+#=
 function moving_in_angle!(robot::Robot)::Vector{<:Integer}
     back_path = []
     while (not(isborder(robot, West)) and not(isborder(robot, Sud)))
@@ -29,13 +40,7 @@ function moving_back_to_start!(robot::Robot, back_path::Vector{<:Integer})::Noth
         end
     end
 end
-
-# get_back_smpl возвращает робота к стене обратно заданному направлению, если на пути нет перегородок
-get_back_smpl!(robot::Robot,side::HorizonSide)::Nothing
-    while (not(isborder(robot,HorizonSide((Int(side)+2)%4))))
-        move!(robot,side)
-    end
-end
+=#
 
 # get_horizontal_lines промаркирует необходимые клетки
 function get_horizontal_lines!(robot::Robot)::Nothing
@@ -61,7 +66,7 @@ function get_horizontal_lines!(robot::Robot)::Nothing
 end
 
 # Point4_master! 
-function Point4_master!(r::Robot)::Nothing
+function master4!(r::Robot)::Nothing
     back_bath = moving_in_angle!(robot)
     putmarker!(robot)
     
@@ -75,8 +80,37 @@ function Point4_master!(r::Robot)::Nothing
     
     # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
     moving_back_to_start!(robot, back_path)
-    
 end
+
+steps = 0
+while !isborder(robot, moveSide)
+    move!(robot, moveSide)
+    steps += 1
+    putmarker!(robot)
+end
+get_back_smpl!(robot, anti_side(moveSide))
+if !isborder(robot, upSide)
+    move!(robot, upSide)
+else
+    break
+end
+isborder = false
+while !isborder && steps > 0
+    steps -= 1
+    putmarker!(robot)
+    for _ in 1:steps
+        move!(robot, moveSide)
+        putmarker!(robot)
+    end
+    get_back_smpl!(robot, anti_side(moveSide))
+    if !isborder(robot, upSide)
+        move!(robot, upSide)
+    else
+        isborder = true
+        break
+    end
+end
+
 
     
 
