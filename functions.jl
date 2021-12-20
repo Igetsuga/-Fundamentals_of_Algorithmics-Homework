@@ -108,6 +108,23 @@ function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::Hor
     end    
 end
 
+#=
+function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+    isborder = false
+    while !(isborder)
+        for side in moveSides
+            moveToBorder!(robot, side)
+            if !(isborder(robot, borderSide))
+                move!(robot, borderSide)
+            else
+                isborder = true
+                break
+            end
+        end
+    end    
+end
+=#
+
 #------------------------------------------------------------------------------------------------------------------------------#
 
 function get_back!(robot, path::Vector{Any})
