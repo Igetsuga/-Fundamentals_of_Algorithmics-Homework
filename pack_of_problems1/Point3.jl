@@ -4,6 +4,9 @@
 РЕЗУЛЬТАТ: Робот - в исходном положении, и все клетки поля промакированы
 """
 
+using HorizonSideRobots
+originRobot = Robot(11,11,animate = false)
+
 
 # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
 function moving_in_angle!(robot::Robot)
@@ -31,7 +34,8 @@ function moving_back_to_start!(robot::Robot, back_path::Vector)::Nothing
 end
 # get_lines промаркирует всё поле змейкой
 function get_lines!(robot::Robot)
-    while (!(isborder(robot,Ost)))
+    flag = true
+    while (flag)
         for side in [Nord,Sud]
             putmarker!(robot)
             while (!(isborder(robot,side)))
@@ -40,13 +44,16 @@ function get_lines!(robot::Robot)
             end
             if (!(isborder(robot,Ost)))
                 move!(robot,Ost)
+            else
+                flag = false
+                break
             end
         end
     end
 end
 
 # Point3_master! главная функция программы
-function Point3_master!(robot::Robot)
+function master3!(robot::Robot)
     # moving_in_angle! передвинет робота в Юго-Западный угол поля и вернёт в переменную back_bath ОБРАТНЫЙ путь робота
     back_path = moving_in_angle!(robot)
     
@@ -64,3 +71,6 @@ function Point3_master!(robot::Robot)
     moving_back_to_start!(robot, back_path)
 
 end
+
+master3!(originRobot)
+show!(originRobot)
