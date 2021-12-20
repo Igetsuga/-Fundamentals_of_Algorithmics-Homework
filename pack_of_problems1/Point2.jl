@@ -8,43 +8,25 @@
 # глабальная массив coords, содержащий координаты стартовой клетки Робота
 coords = []
 
-# moving_in_angle! передвигает Робота в нижний левый угол
-function moving_in_angle!(r::Robot)
-    stepsX = 0
-    stepsY = 0
-    for side in [West,Sud]
-        while (isborder(r,side)==false)
-            move!(r,side)
-            stepsX += 1*(side==West)
-            stepsY += 1*(side==Sud)
-        end
-    end
-    push!(coords,stepsX)
-    push!(coords,stepsY)
-end
-
-# moving_back_to_start! двигает робота из правой нижней клетки в начальную
-function moving_back_to_start!(r::Robot,vector::Vector{<:Integer})::Nothing
-    for side in [Nord,Ost]
-        counter = coords[1]*(side==Nord) + coords[2]*(side==Ost)
-        for j in 1:counter
-            move!(r,side)
-        end
-    end
-end
+using HorizonSideRobots
+originRobot = Robot(animate = true)
+include("../functions.jl")
 
 # get_line! создаёт линию из маркеров
-function get_line!(r::Robot,side::HorizonSide)::Nothing
-    while (isborder(r,side) == false)
-        move!(r,side)
-        putmarker!(r)
+function get_line!(robot::Robot,side::HorizonSide)::Nothing
+    while (isborder(robot,side) == false)
+        move!(robot,side)
+        putmarker!(robot)
     end
 end
 
 # Point2_master! главная функция программы
-function Point2_master!(r::Robot)::Nothing
-    moving_in_angle!(r)
+function master2!(robot::Robot)::Nothing
+    back_path = moving_in_angle!(robot)
+
     for side in [Nord,Ost,Sud,West]
-        get_line!(r,side)
+        get_line!(robot,side)
     end
+
+    moving_back_to_start!(robot, back_path)
 end
