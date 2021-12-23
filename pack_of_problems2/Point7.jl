@@ -6,36 +6,47 @@
 ```
 
 using HorizonSideRobots
-r = Robot(animate=false)
+originRobot = Robot(10,7,animate = false)
 include("../functions.jl")
 
 function mod_moveToBorder!(robot::Robot, side::HorizonSide, counter::Integer)
-    while (!isborder(robot, side))
-        move!(robot, side)
-        if (counter % 2 == 0)
-            putmarker!(robot)
+    while true
+        if !isborder(robot, side)
+            move!(robot, side)
+            if (counter % 2 == 0)
+                putmarker!(robot)
+            end
+            counter += 1
+            println(counter)
+        else
+            break
         end
     end
-    counter += 1
+    return counter
 end
 
-function mod_moveLikeSnake!(robot::Robot, sides::NTuple{2,HorizonSide}, side::HorizonSide, counter::Integer)
-    if (isborder(robot, sides[1]))
-        mod_moveToBorder!(robot, sides[2], counter)
-        if (!isborder(robot, side))
-            move!(robot, side)
-            counter += 1
+function mod_moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+    border_borderSide = false
+    counter = 0
+    while !border_borderSide
+        for side in moveSides
+            counter = mod_moveToBorder!(robot, side, counter)
+            if !(isborder(robot, borderSide))
+                move!(robot, borderSide)
+                if (counter % 2 == 0)
+                    putmarker!(robot)
+                end 
+                counter += 1
+                println(counter)
+            else
+                border_borderSide = true
+                break
+            end
         end
-    else
-        mod_moveToBorder!(robot, sides[1], counter)
-        if (!isborder(robot, side))
-            move!(robot, side)
-            counter += 1
-        end
-    end
+    end    
 end
 
-function get_one_marked_line!(robot::Robot, side, counter::Integer)::Nothing
+#=function get_one_marked_line!(robot::Robot, side, counter::Integer)::Nothing
     while (!(isborder(robot,side)))
         if (counter % 2 == 1)
             putmarker!(robot)
@@ -45,20 +56,18 @@ function get_one_marked_line!(robot::Robot, side, counter::Integer)::Nothing
         end
         counter += 1
     end
-end
+end=#
 
 
 # master! главная функция программы.
-function master!(robot::Robot)::Nothing
+function master7!(robot::Robot)::Nothing
     back_path = moving_in_angle!(robot)
 
-    counter = 0
+    mod_moveLikeSnake!(robot, (Nord, Sud), Ost)
     
-    while !isborder(robot, Ost)
-        mod_moveLikeSnake!(robot, (Nord, Sud), Ost, counter)
-    end
-
-    moving_in_angle!(robot)
         
     moving_back_to_start!(robot, back_path)
 end 
+
+master7!(originRobot)
+show!(originRobot)
