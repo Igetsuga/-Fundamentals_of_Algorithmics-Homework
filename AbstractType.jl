@@ -282,6 +282,10 @@ getCountOfMarkers(robot::MODcountmarkersRobot) = robot.markers
 
 
 function move!(robot::MODcountmarkersRobot, side::HorizonSide)
+    if (ismarker(robot.robot))
+        robot.markers += 1
+        robot.temperature += temperature(robot.robot)
+    end
     move!(robot.robot, side)
     if (ismarker(robot.robot))
         robot.markers += 1
