@@ -110,14 +110,14 @@ end
 
 #=
 function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
-    isborder = false
-    while !(isborder)
+    isborderSide = false
+    while !(isborderSide)
         for side in moveSides
             moveToBorder!(robot, side)
-            if !(isborder(robot, borderSide))
+            if !(isborderSide(robot, borderSide))
                 move!(robot, borderSide)
             else
-                isborder = true
+                isborderSide = true
                 break
             end
         end
@@ -226,6 +226,7 @@ end
 
 # moving_back_to_start! вернёт робота в начальное положение через обратный путь робота
 function moving_back_to_start!(robot, back_path::Vector)::Nothing
+    moving_in_angle!(robot)
     for i in 1:length(back_path)
         move!(robot, anti_side(HorizonSide(back_path[i])))
     end
