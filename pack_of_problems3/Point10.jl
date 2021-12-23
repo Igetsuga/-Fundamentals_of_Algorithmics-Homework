@@ -9,12 +9,12 @@
 
 using HorizonSideRobots
 
-originRobot = Robot(animate = false, "10example.sit")
-mod_CmR = MODcountmarkersRobot(originRobot,0,0)
-
 show!(originRobot)
 include("../AbstractType.jl")
 include("../functions.jl")
+
+originRobot = Robot(animate = false, "10example.sit")
+mod_CmR = MODcountmarkersRobot(originRobot,0,0)
 
 function moveLikeSnake!(robot::MODcountmarkersRobot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
     flag = true
