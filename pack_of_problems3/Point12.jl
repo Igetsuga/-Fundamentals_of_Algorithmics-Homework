@@ -9,19 +9,58 @@ n - это параметр функции. Начальное положени�
 ```
 
 using HorizonSideRobots
-include("../use.jl")
+include("../AbstractType.jl")
+include("../functions.jl")
+originRobot = Robot(10,10,animate = true)
+coordsRobot = CoordsRobot(originRobot, 0, 0)
 
-function master!(robot::Robot, n::Integer)::Nothing
+
+
+
+
+#------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+function master12!(robot, data)::Nothing
     back_path = moving_in_angle!(robot)
+
+    function mod_putmarker!(robot::CoordsRobot, data)
+        x = robot.x
+        y = robot.y
+        if x in (0 : data - 1) && y in (0 : data - 1) || x in (data : 2 * data- 1) && y in (data : 2 * data- 1)
+            putmarker!(robot.coordsrobot)
+        end
+    end
+
+    function moveToBorder!(robot, side)::Nothing
+        while (!isborder(robot, side))
+            move!(robot, side)
+            println(robot.x, robot.y)
+            mod_putmarker!(robot, data)
+        end
+    end
+
+    function moveLikeSnake!(robot, moveSides::NTuple{2,HorizonSide}, borderSide::HorizonSide)::Nothing
+        isborderSide = false
+        while !(isborderSide)
+            for side in moveSides
+                moveToBorder!(robot, side)
+                if !(isborderSide(robot, borderSide))
+                    move!(robot, borderSide)
+                    mod_putmarker!(robot, data)
+                else
+                    isborderSide = true
+                    break
+                end
+            end
+        end    
+    end
                                           
-    
-
-
-
-
-
+    moveLikeSnake!(robot, (Nord, Sud), Ost)
 
     moving_in_angle!(robot)
     moving_back_to_start!(robot, back_path)
 end
 
+master12!(coordsRobot, 2)
